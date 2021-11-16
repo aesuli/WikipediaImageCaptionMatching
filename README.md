@@ -20,7 +20,7 @@ pip install levenshtein
 
 ### Levenshtein
 
-[test_levenshtein.py](test_levenshtein.py) Trivial baseline thatTrivial baseline that uses levenshtein distance to
+[test_levenshtein.py](test_levenshtein.py) Trivial baseline that uses levenshtein distance to
 compute similarity between filenames and captions.
 
 ### BERT Language model similarity
@@ -32,6 +32,8 @@ model. Every line is the concatenation of the filename (converted into a human r
 
 [train_bert_lm.py](train_bert_lm.py) trains a bert masked language model. It takes about 20 hours to train one epoch on
 an RTX2080.
+
+*TODO* try a larger batch size value than the default one (8)
 
 [test_bert_lm_cosine_sim.py](test_bert_lm_cosine_sim.py) this test uses the bert masked language model to embed
 filenames and captions and then computes the cosine similarity among all pairs, keeping the top 5 most similar captions
