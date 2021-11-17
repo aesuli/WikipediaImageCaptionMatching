@@ -46,7 +46,7 @@ sentence pair classifier. Matching pairs come from original training data. Non-m
 sampling, i.e., random filenames and captions are put together.
 
 [train_roberta_classifier.py](train_roberta_classifier.py) trains a sentence pair classifier based on xlm-roberta.
-It take about 65 hours to train one epoch on an RTX2080.
+It takes about 65 hours to train one epoch on an RTX2080.
 
 [test_roberta_classifier.py](test_roberta_classifier.py) classifies all the pairs of filenames and captions as either
 matching or non-matching. Classification scores are used to keep the top 5 most matching captions.
