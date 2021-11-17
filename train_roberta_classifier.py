@@ -2,7 +2,6 @@ import logging
 from multiprocessing import freeze_support
 from urllib.parse import unquote
 
-import pandas as pd
 from simpletransformers.classification import (
     ClassificationModel, ClassificationArgs
 )
@@ -28,13 +27,17 @@ if __name__ == '__main__':
                                     overwrite_output_dir=True,
                                     save_steps=100000,
                                     save_model_every_epoch=True,
-                                    train_batch_size=batch_size)
+                                    train_batch_size=batch_size,
+                                    lazy_loading=True,
+                                    lazy_delimiter='\t',
+                                    lazy_text_a_column=0,
+                                    lazy_text_b_column=1,
+                                    lazy_labels_column=2,
+                                    lazy_loading_start_line=1)
 
     # model = 'xlm-roberta-large'
     model_name = 'xlm-roberta-base'
 
     model = ClassificationModel("auto", model_name, args=model_args)
 
-    data = pd.read_csv('data/train_roberta_classifier.tsv', sep='\t', quotechar='"')
-
-    model.train_model(data)
+    model.train_model('data/train_roberta_classifier.tsv')

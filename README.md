@@ -46,6 +46,7 @@ sentence pair classifier. Matching pairs come from original training data. Non-m
 sampling, i.e., random filenames and captions are put together.
 
 [train_roberta_classifier.py](train_roberta_classifier.py) trains a sentence pair classifier based on xlm-roberta.
+It take about 65 hours to train one epoch on an RTX2080.
 
 [test_roberta_classifier.py](test_roberta_classifier.py) classifies all the pairs of filenames and captions as either
 matching or non-matching. Classification scores are used to keep the top 5 most matching captions.
@@ -55,8 +56,8 @@ matching or non-matching. Classification scores are used to keep the top 5 most 
 
 Kaggle leaderboard score:
 
-| leaderboard | method| date  | score | 
-|--------|------------|-------|-------|
-| public | Levenshtein |  2021-11-16 | 0.21426 | 
-| public | BERT-LM | 2021-11-16 | 0.11399 | 
-| public | ROBERTA-classifier | |  | 
+| leaderboard | method| date  | score | notes | 
+|---|---|---|---|---|
+| public | Levenshtein |  2021-11-16 | 0.21426 | |
+| public | BERT-LM | 2021-11-16 | 0.11399 | train samples are the concatenation of matching filename and caption, trained one epoch | 
+| public | ROBERTA-classifier |  |  |  | 
