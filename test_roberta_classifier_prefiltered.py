@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -15,19 +15,25 @@ if __name__ == '__main__':
     df = pd.read_csv('data/test.tsv', sep='\t')
     filenames = [url_to_filename(url) for url in df['image_url']]
 
+    k = 100
+    all_candidates = list()
+    with open('data/sorted_candidates.csv', mode='tr', encoding='utf-8') as input_file:
+        for line in input_file:
+            all_candidates.append(int(token) for token in line.split(',')[:k])
+
     df = pd.read_csv('data/test_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
     to_match = 5
 
     results = list()
-    for idx, filename in enumerate(filenames):
-        predictions, raw_outputs = model.predict([[filename, caption] for caption in captions])
+    for idx, (filename, candidates) in enumerate(zip(filenames, all_candidates)):
+        predictions, raw_outputs = model.predict([[filename, caption] for caption in captions[candidates]])
         top = np.argsort(raw_outputs[:, 1])[-to_match:]
         for top_idx in reversed(top):
-            print(f'{idx} | {filename} | {captions[top_idx]}', raw_outputs[top_idx, 1])
-            results.append((idx, captions[top_idx]))
+            print(f'{idx} | {filename} | {captions[candidates[top_idx]]}', raw_outputs[top_idx, 1])
+        results.append((idx, captions[candidates[top_idx]]))
 
-    output_filename = f'output/roberta_classifier_submission_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv'
+    output_filename = f'output/roberta_classifier_prefiltered_submission_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv'
     df = pd.DataFrame(results, columns=['id', 'caption_title_and_reference_description'])
     df.to_csv(output_filename, index=False)
