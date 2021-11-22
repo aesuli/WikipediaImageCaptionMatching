@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from simpletransformers.classification import ClassificationModel
 from simpletransformers.config.model_args import ClassificationArgs
+from tqdm.auto import tqdm
 
 from train_roberta_classifier import url_to_filename
 
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     to_match = 5
 
     results = list()
-    for idx, (filename, candidates) in enumerate(zip(filenames, all_candidates)):
+    for idx, (filename, candidates) in tqdm(enumerate(zip(filenames, all_candidates)), total=len(filenames)):
         pairs = [[filename, caption] for caption in captions[candidates]]
         predictions, raw_outputs = model.predict(pairs)
         top = np.argsort(raw_outputs[:, 1])[-to_match:]
