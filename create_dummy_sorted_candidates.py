@@ -7,7 +7,7 @@ if __name__ == '__main__':
     count = len(pd.read_csv('data/test.tsv', sep='\t'))
     print(count)
 
-    k = 10000
+    k = 1000
 
     with open(f'data/sorted_candidates.csv', mode='tw', encoding='utf-8') as output_file:
         population = list(range(count))

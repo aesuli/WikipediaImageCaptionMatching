@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import numpy as np
 import pandas as pd
@@ -14,9 +15,14 @@ if __name__ == '__main__':
     # data_source = 'test'
     data_source = 'validation'
 
+    if os.name == 'nt':
+        use_multiprocessing_for_evaluation = False
+    else:
+        use_multiprocessing_for_evaluation = True
 
-    model_args = ClassificationArgs(eval_batch_size=1024, use_multiprocessing_for_evaluation=False)
-    if data_source =='validation':
+    model_args = ClassificationArgs(eval_batch_size=1024,
+                                    use_multiprocessing_for_evaluation=use_multiprocessing_for_evaluation)
+    if data_source == 'validation':
         model = ClassificationModel('auto', 'roberta_classifier/checkpoint-900000', args=model_args)
     else:
         model = ClassificationModel('auto', 'roberta_classifier/checkpoint-934867-epoch-1', args=model_args)
@@ -34,7 +40,8 @@ if __name__ == '__main__':
         predictions, raw_outputs = model.predict(pairs)
         top = np.argsort(raw_outputs[:, 1])[-to_match:]
         for top_idx in reversed(top):
-            print(f'{datetime.datetime.now():%Y-%m-%d-%H-%M-%S} | {idx} | {filename} | {captions[top_idx]}', raw_outputs[top_idx, 1])
+            print(f'{datetime.datetime.now():%Y-%m-%d-%H-%M-%S} | {idx} | {filename} | {captions[top_idx]}',
+                  raw_outputs[top_idx, 1])
             results.append((idx, captions[top_idx]))
 
     output_filename = f'output/roberta_classifier_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv'

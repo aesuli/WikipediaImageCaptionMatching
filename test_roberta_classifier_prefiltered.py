@@ -1,5 +1,7 @@
 import datetime
+import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -12,12 +14,27 @@ from train_roberta_classifier import url_to_filename
 if __name__ == '__main__':
     # classifies all the pairs of filenames and captions as either matching or non-matching
     # classification scores are used to keep the top 5 most matching captions
-    data_source = 'test'
-    # data_source = 'validation'
 
     prefilter_filename = sys.argv[1]
 
-    model_args = ClassificationArgs(eval_batch_size=1024, use_multiprocessing_for_evaluation=False)
+    if prefilter_filename.find('test') >= 0:
+        data_source = 'test'
+    else:
+        data_source = 'validation'
+
+    prefilter_name = Path(prefilter_filename).name
+    prefilter_name = prefilter_name[:prefilter_name.find(f'_{data_source}')]
+
+    print('Prefilter', prefilter_name)
+    print('Data source', data_source)
+
+    if os.name == 'nt':
+        use_multiprocessing_for_evaluation = False
+    else:
+        use_multiprocessing_for_evaluation = True
+
+    model_args = ClassificationArgs(eval_batch_size=1024,
+                                    use_multiprocessing_for_evaluation=use_multiprocessing_for_evaluation)
     if data_source == 'validation':
         model = ClassificationModel('auto', 'roberta_classifier/checkpoint-900000', args=model_args)
     else:
@@ -47,6 +64,6 @@ if __name__ == '__main__':
                   raw_outputs[top_idx, 1])
             results.append((idx, captions[candidates[top_idx]]))
 
-    output_filename = f'output/roberta_classifier_prefiltered_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv'
+    output_filename = f'output/roberta_classifier_{prefilter_name}_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv'
     df = pd.DataFrame(results, columns=['id', 'caption_title_and_reference_description'])
     df.to_csv(output_filename, index=False)
