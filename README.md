@@ -64,14 +64,20 @@ Using 1000 candidates captions for every image, it requires 27 hours to produce 
 [create_dummy_sorted_candidates.py](create_dummy_sorted_candidates.py) Creates a demo file in the format required by the classification script, i.e., a row for every image with ids of candidates separated by a comma:
 
 ```
-1,29,2039,2303,4506,30490,56895,...
-23,45,4932,40238,53939,54998,92010,...
-...
+135,235,414,891,696,417,88,288,12,247,245,471,911...
+995,660,581,240,804,818,418,965,961,834,179,837,4...
+13,16,273,32,779,261,253,495,534,913,912,497,910,...
 ```
+Ids in prefiltered files must be in order with highest confidence candidates first and lowest confidence candidates last.
 
 [test_roberta_classifier_prefiltered.py](test_roberta_classifier_prefiltered.py) Same as the `test_roberta_classifier.py` above, but also loading the list of prefilters ids.
 
 The scripts [test_bert_lm_cosine_sim.py](test_bert_lm_cosine_sim.py) and [test_levenshtein.py](test_levenshtein.py) have a `prefilter` variable added that, when set to a natural number, produces a prefilter file instead of a submission file.
+
+### Merging prefilters
+
+[merge_prefiltered.py](merge_prefiltered.py) merges prefiltered ids by different methods using a round-robin policy.
+Ids in prefiltered files must be in order with highest confidence candidates first and lowest confidence candidates last.
 
 ## Validation
 
@@ -104,5 +110,5 @@ Kaggle leaderboard score:
 | public | Levenshtein |  2021-11-16 | 0.21426 | |
 | public | BERT-LM | 2021-11-16 | 0.11399 | train samples are the concatenation of matching filename and caption, trained one epoch | 
 | public | ROBERTA-classifier |  |  | NOT ENOUGH TIME BEFORE THE DEADLINE | 
-| public | ROBERTA-classifier prefilter Levenshtein | 2021-11- |  | prefilter = 1000 | 
+| public | ROBERTA-classifier prefilter Levenshtein | 2021-11-25 | 0.36995 | prefilter = 1000 | 
 | public | ROBERTA-classifier prefilter BERT-LM | 2021-11-24 | 0.26852 | prefilter = 1000 | 

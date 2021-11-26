@@ -47,7 +47,7 @@ if __name__ == '__main__':
     all_candidates = list()
     with open(prefilter_filename, mode='tr', encoding='utf-8') as input_file:
         for line in input_file:
-            all_candidates.append([int(token) for token in line.split(',')[:k]])
+            all_candidates.append(sorted([int(token) for token in line.split(',')[:k]]))
 
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']

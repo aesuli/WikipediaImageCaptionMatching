@@ -28,8 +28,9 @@ if __name__ == '__main__':
 
     to_match = 5
 
-    prefilter = 0
+    # prefilter = 0
     # prefilter = 200
+    prefilter = 1000
 
     if prefilter:
         to_match = prefilter
@@ -72,7 +73,7 @@ if __name__ == '__main__':
     if prefilter:
         with open(f'output/prefilter_bert_lm_cosine_similarity_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv', mode='wt', encoding='utf-8') as output_file:
             for row in top_idxs:
-                print(','.join((str(idx) for idx in sorted(row))), file=output_file)
+                print(','.join((str(idx) for idx in row[::-1])), file=output_file)
     else:
         results = list()
         order = np.argsort(top_values, axis=1)

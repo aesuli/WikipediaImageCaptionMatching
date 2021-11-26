@@ -21,6 +21,7 @@ if __name__ == '__main__':
     captions = df['caption_title_and_reference_description']
 
     # prefilter = 0
+    # prefilter = 200
     prefilter = 1000
 
     if prefilter:
@@ -43,7 +44,7 @@ if __name__ == '__main__':
                 f'output/prefilter_levenshtein_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv',
                 mode='wt', encoding='utf-8') as output_file:
             for row in results:
-                print(','.join((str(idx) for idx in sorted(row))), file=output_file)
+                print(','.join((str(idx) for idx in row)), file=output_file)
     else:
         df = pd.DataFrame(results, columns=['id', 'caption_title_and_reference_description'])
         df.to_csv(f'output/levenshtein_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv', index=False)
