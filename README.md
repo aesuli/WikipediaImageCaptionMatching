@@ -100,6 +100,7 @@ Validation set size = 1000
 | ROBERTA-classifier | 2021-11-22 | 0.78883 | 0.827 | model not fit on validation data |
 | ROBERTA-classifier prefilter Levenshtein | 2021-11-24 | 0.54774 | 0.565 | prefilter = 200 | 
 | ROBERTA-classifier prefilter BERT-LM | 2021-11-22 | 0.51174 | 0.532 | prefilter = 200 | 
+| ROBERTA-classifier prefilter Merged Levenshtein BERT-LM | 2021-11-29 | 0.43356 | 0.452 | prefilter = 200 | 
 
 ## Results on Kaggle leaderboard
 
@@ -112,3 +113,5 @@ Kaggle leaderboard score:
 | public | ROBERTA-classifier |  |  | NOT ENOUGH TIME BEFORE THE DEADLINE | 
 | public | ROBERTA-classifier prefilter Levenshtein | 2021-11-25 | 0.36995 | prefilter = 1000 | 
 | public | ROBERTA-classifier prefilter BERT-LM | 2021-11-24 | 0.26852 | prefilter = 1000 | 
+| public | ROBERTA-classifier prefilter Merged Levenshtein BERT-LM | 2021-11-27 | 0.24078 | prefilter = 1000 |
+| public | ROBERTA-classifier prefilter Contrastive | 2021-11-28| 0.50229 | prefilter = 1000 |
