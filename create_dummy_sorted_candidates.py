@@ -10,8 +10,8 @@ if __name__ == '__main__':
     # random_sample = True
     random_sample = False
 
-    k = 800
-    start = 200
+    k = 500
+    start = 700
 
     if random_sample:
         with open(f'data/random_candidates_test.csv', mode='tw', encoding='utf-8') as output_file:

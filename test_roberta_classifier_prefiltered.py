@@ -28,7 +28,9 @@ if __name__ == '__main__':
     prefilter_name = prefilter_name[:prefilter_name.find(f'_{data_source}')]
 
     # partial_result_fileprefix = None
-    partial_result_fileprefix = 'scores/roberta_classifier_range_candidates_0_100_test_2021-11-29-15-42'
+    partial_result_fileprefix = sys.argv[2]
+
+    partial_result_fileprefix = partial_result_fileprefix[:partial_result_fileprefix.rfind('_')]
 
     top_idxs = list()
     top_scores = list()
@@ -40,8 +42,9 @@ if __name__ == '__main__':
         for row in df.iterrows():
             top_scores.append(list(row[1]))
 
-    print('Prefilter', prefilter_name)
-    print('Data source', data_source)
+    print('Data source:', data_source)
+    print('Prefilter:', prefilter_name)
+    print('Precomputed:', partial_result_fileprefix)
 
     if os.name == 'nt':
         use_multiprocessing_for_evaluation = False
@@ -82,7 +85,7 @@ if __name__ == '__main__':
             local_top_idxs.append(candidates[top_idx])
         if len(top_idxs) == len(filenames):
             duplicate = list()
-            for pos,local_idx in enumerate(local_top_idxs):
+            for pos, local_idx in enumerate(local_top_idxs):
                 if local_idx in top_idxs[idx]:
                     duplicate.append(pos)
             for pos in reversed(duplicate):
