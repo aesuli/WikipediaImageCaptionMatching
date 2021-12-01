@@ -21,8 +21,7 @@ if __name__ == '__main__':
 
     meta_counts = Counter(freqs)
 
-
-    print(total,distinct_count,total-distinct_count,freq_max,freq_mean)
+    print(total, distinct_count, total - distinct_count, freq_max, freq_mean)
 
     pprint(counts.most_common(10))
 
