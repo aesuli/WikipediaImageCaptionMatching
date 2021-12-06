@@ -27,24 +27,13 @@ if __name__ == '__main__':
     prefilter_name = Path(prefilter_filename).name
     prefilter_name = prefilter_name[:prefilter_name.find(f'_{data_source}')]
 
-    # partial_result_fileprefix = None
-    partial_result_fileprefix = sys.argv[2]
-
-    partial_result_fileprefix = partial_result_fileprefix[:partial_result_fileprefix.rfind('_')]
+    os.makedirs(f'scores/by_idx_{prefilter_name}_{data_source}', exist_ok=True)
 
     top_idxs = list()
     top_scores = list()
-    if partial_result_fileprefix:
-        df = pd.read_csv(partial_result_fileprefix + '_idxs.csv')
-        for row in df.iterrows():
-            top_idxs.append(list(row[1]))
-        df = pd.read_csv(partial_result_fileprefix + '_scores.csv')
-        for row in df.iterrows():
-            top_scores.append(list(row[1]))
 
     print('Data source:', data_source)
     print('Prefilter:', prefilter_name)
-    print('Precomputed:', partial_result_fileprefix)
 
     if os.name == 'nt':
         use_multiprocessing_for_evaluation = False
@@ -72,12 +61,13 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
+    to_keep = 1000
     to_match = 5
 
     for idx, (filename, candidates) in tqdm(enumerate(zip(filenames, all_candidates)), total=len(filenames)):
         pairs = [[filename, caption] for caption in captions[candidates]]
         predictions, raw_outputs = model.predict(pairs)
-        top = np.argsort(raw_outputs[:, 1])[-to_match:]
+        top = np.argsort(raw_outputs[:, 1])[-to_keep:]
         local_top_scores = list()
         local_top_idxs = list()
         for top_idx in reversed(top):
@@ -93,16 +83,20 @@ if __name__ == '__main__':
                 local_top_scores.pop(pos)
             group_idxs = top_idxs[idx] + local_top_idxs
             group_scores = top_scores[idx] + local_top_scores
-            group_best = list(reversed(np.argsort(group_scores)[-to_match:]))
+            group_best = list(reversed(np.argsort(group_scores)[-to_keep:]))
             top_idxs[idx] = [group_idxs[best] for best in group_best]
             top_scores[idx] = [group_scores[best] for best in group_best]
         else:
             top_scores.append(local_top_scores)
             top_idxs.append(local_top_idxs)
+        with open(f'scores/by_idx_{prefilter_name}_{data_source}/{idx}.txt', mode='tw', encoding='utf-8') as output_file:
+            print(','.join(f'{id}:{score}' for id, score in zip(top_idxs[idx], top_scores[idx])),file=output_file)
+        top_idxs[idx] = top_idxs[idx][:to_match]
+        top_scores[idx] = top_scores[idx][:to_match]
 
     results = list()
     for idx, row in enumerate(top_idxs):
-        for top_idx in row:
+        for top_idx in row[:to_match]:
             results.append((idx, captions[top_idx]))
 
     time_str = f'{datetime.datetime.now():%Y-%m-%d-%H-%M}'
