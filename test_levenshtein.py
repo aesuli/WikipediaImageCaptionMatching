@@ -20,18 +20,34 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
-    # prefilter = 0
+    use_tran = True
+
+    if use_tran:
+        df = pd.read_csv(f'data/{data_source}_en_tran.tsv', sep='\t')
+        tran_filenames = df['image_url']
+
+        df = pd.read_csv(f'data/{data_source}_caption_list_en_tran.csv')
+        tran_captions = df['caption_title_and_reference_description']
+        tran_flag = '_tran'
+    else:
+        tran_filenames = filenames
+        tran_captions = captions
+        tran_flag = ''
+
+    prefilter = 0
     # prefilter = 200
-    prefilter = 1000
+    # prefilter = 1000
 
     if prefilter:
         to_match = prefilter
+    else:
+        to_match = 5
 
     results = list()
     for idx in tqdm(range(len(filenames))):
-        filename = filenames[idx]
+        filename = tran_filenames[idx]
         partial_ratio = partial(ratio, filename)
-        sims = list(map(partial_ratio, [caption.strip('"') for caption in captions]))
+        sims = list(map(partial_ratio, [caption.strip('"') for caption in tran_captions]))
         top_idxs = np.argsort(sims)[-to_match:]
         if prefilter:
             results.append(top_idxs)
@@ -41,10 +57,11 @@ if __name__ == '__main__':
 
     if prefilter:
         with open(
-                f'output/prefilter_levenshtein_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv',
+                f'output/prefilter_levenshtein_{data_source}{tran_flag}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv',
                 mode='wt', encoding='utf-8') as output_file:
             for row in results:
                 print(','.join((str(idx) for idx in row)), file=output_file)
     else:
         df = pd.DataFrame(results, columns=['id', 'caption_title_and_reference_description'])
-        df.to_csv(f'output/levenshtein_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv', index=False)
+        df.to_csv(f'output/levenshtein_{data_source}{tran_flag}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv',
+                  index=False)

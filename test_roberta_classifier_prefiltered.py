@@ -46,8 +46,17 @@ if __name__ == '__main__':
         model = ClassificationModel('auto', 'roberta_classifier/checkpoint-900000', args=model_args)
     else:
         model = ClassificationModel('auto', 'roberta_classifier/checkpoint-934867-epoch-1', args=model_args)
+
     df = pd.read_csv(f'data/{data_source}.tsv', sep='\t')
     filenames = [url_to_filename(url) for url in df['image_url']]
+
+    use_tran = True
+
+    if use_tran:
+        df = pd.read_csv(f'data/{data_source}_en_tran.tsv', sep='\t')
+        filenames_tran = df['image_url']
+    else:
+        filenames_tran = filenames
 
     k_start = None
     k_end = None
@@ -61,11 +70,21 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
+    use_tran = True
+
+    if use_tran:
+        df = pd.read_csv(f'data/{data_source}_caption_list_en_tran.csv')
+        captions_tran = df['caption_title_and_reference_description']
+        tran_flag = '_tran'
+    else:
+        captions_tran = captions
+        tran_flag = ''
+
     to_keep = 1000
     to_match = 5
 
-    for idx, (filename, candidates) in tqdm(enumerate(zip(filenames, all_candidates)), total=len(filenames)):
-        pairs = [[filename, caption] for caption in captions[candidates]]
+    for idx, (filename, candidates) in tqdm(enumerate(zip(filenames_tran, all_candidates)), total=len(filenames)):
+        pairs = [[filename, caption] for caption in captions_tran[candidates]]
         predictions, raw_outputs = model.predict(pairs)
         top = np.argsort(raw_outputs[:, 1])[-to_keep:]
         local_top_scores = list()
@@ -101,14 +120,14 @@ if __name__ == '__main__':
 
     time_str = f'{datetime.datetime.now():%Y-%m-%d-%H-%M}'
 
-    output_filename = f'scores/roberta_classifier_{prefilter_name}_{data_source}_{time_str}_scores.csv'
+    output_filename = f'scores/roberta_classifier_{prefilter_name}_{data_source}{tran_flag}_{time_str}_scores.csv'
     df = pd.DataFrame(top_scores)
     df.to_csv(output_filename, index=False)
 
-    output_filename = f'scores/roberta_classifier_{prefilter_name}_{data_source}_{time_str}_idxs.csv'
+    output_filename = f'scores/roberta_classifier_{prefilter_name}_{data_source}{tran_flag}_{time_str}_idxs.csv'
     df = pd.DataFrame(top_idxs)
     df.to_csv(output_filename, index=False)
 
-    output_filename = f'output/roberta_classifier_{prefilter_name}_{data_source}_{time_str}.csv'
+    output_filename = f'output/roberta_classifier_{prefilter_name}_{data_source}{tran_flag}_{time_str}.csv'
     df = pd.DataFrame(results, columns=['id', 'caption_title_and_reference_description'])
     df.to_csv(output_filename, index=False)
