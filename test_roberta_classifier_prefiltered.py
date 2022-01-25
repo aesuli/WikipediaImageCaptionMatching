@@ -50,7 +50,8 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}.tsv', sep='\t')
     filenames = [url_to_filename(url) for url in df['image_url']]
 
-    use_tran = True
+    # use_tran = True
+    use_tran = False
 
     if use_tran:
         df = pd.read_csv(f'data/{data_source}_en_tran.tsv', sep='\t')
@@ -59,7 +60,7 @@ if __name__ == '__main__':
         filenames_tran = filenames
 
     k_start = None
-    k_end = None
+    k_end = 200
     # k_start = 0
     # k_end = 1000
     all_candidates = list()
@@ -70,7 +71,8 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
-    use_tran = True
+    # use_tran = True
+    use_tran = False
 
     if use_tran:
         df = pd.read_csv(f'data/{data_source}_caption_list_en_tran.csv')
@@ -81,7 +83,7 @@ if __name__ == '__main__':
         tran_flag = ''
 
     to_keep = 1000
-    to_match = 5
+    to_match = 100
 
     for idx, (filename, candidates) in tqdm(enumerate(zip(filenames_tran, all_candidates)), total=len(filenames)):
         pairs = [[filename, caption] for caption in captions_tran[candidates]]

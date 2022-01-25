@@ -32,7 +32,7 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
-    to_match = 5
+    to_match = 100
 
     results = list()
     for idx, filename in tqdm(enumerate(filenames), total=len(filenames)):

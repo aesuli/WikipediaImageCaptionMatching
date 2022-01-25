@@ -15,8 +15,8 @@ if __name__ == '__main__':
     # and then computes the cosine similarity among all pairs, keeping the top 5 most
     # similar captions for every filename
 
-    data_source = 'test'
-    # data_source = 'validation'
+    # data_source = 'test'
+    data_source = 'validation'
 
     model = RepresentationModel('bert', 'bert_lm/checkpoint-912250-epoch-1')
 
@@ -26,11 +26,11 @@ if __name__ == '__main__':
     df = pd.read_csv(f'data/{data_source}_caption_list.csv')
     captions = df['caption_title_and_reference_description']
 
-    to_match = 5
+    to_match = 10
 
     # prefilter = 0
-    # prefilter = 200
-    prefilter = 1000
+    prefilter = 200
+    # prefilter = 1000
 
     if prefilter:
         to_match = prefilter
@@ -70,11 +70,12 @@ if __name__ == '__main__':
             top_values = np.take_along_axis(batch_sims, top, axis=1)
             top_idxs = top + idx
 
-    if prefilter:
+    # if prefilter:
+    if True:
         with open(f'output/prefilter_bert_lm_cosine_similarity_{data_source}_{datetime.datetime.now():%Y-%m-%d-%H-%M}.csv', mode='wt', encoding='utf-8') as output_file:
             for row in top_idxs:
                 print(','.join((str(idx) for idx in row[::-1])), file=output_file)
-    else:
+    # else:
         results = list()
         order = np.argsort(top_values, axis=1)
         for row_idx, idxs in enumerate(order):

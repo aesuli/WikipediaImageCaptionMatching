@@ -21,28 +21,31 @@ if __name__ == '__main__':
 
     submission = pd.read_csv(submission_filename)
 
-    last_id = -1
-    den_count = 0
-    total_rel = 0
-    found = 0
-    for row in submission.iterrows():
-        id = row[1]['id']
-        if last_id != id:
-            if last_id != -1:
-                total_rel += rel
-                den_count += 1
-            id_count = 1
-            rel = 0
-        else:
-            id_count += 1
-        if captions.iloc[id] == row[1]['caption_title_and_reference_description']:
-            found += 1
-            rel += 1 / np.log2(id_count + 1)
+    ks = (1,5,10)
 
-        last_id = id
+    for k in ks:
+        last_id = -1
+        den_count = 0
+        total_rel = 0
+        found = 0
+        for row in submission.iterrows():
+            id = row[1]['id']
+            if last_id != id:
+                if last_id != -1:
+                    total_rel += rel
+                    den_count += 1
+                id_count = 1
+                rel = 0
+            else:
+                id_count += 1
+            if captions.iloc[id] == row[1]['caption_title_and_reference_description'] and id_count<=k:
+                found += 1
+                rel += 1 / np.log2(id_count + 1)
 
-    total_rel += rel
-    den_count += 1
+            last_id = id
 
-    print(f'Retrieved {found}/{den_count}')
-    print(f'DCG = {total_rel / den_count}')
+        total_rel += rel
+        den_count += 1
+
+        print(f'Retrieved@{k} {found}/{den_count}')
+        print(f'nDCG{k} = {total_rel / den_count}')

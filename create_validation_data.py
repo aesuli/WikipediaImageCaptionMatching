@@ -4,7 +4,7 @@ if __name__ == '__main__':
     # creates validation data for the sentence pair classifier
     # gets data from the end of the training data, use it on a model that has not been trained on such data
     validation_data = list()
-    validation_size = 1000
+    validation_size = 10000
     data_df = pd.read_csv('data/train-00004-of-00005.tsv', sep='\t', usecols=[2, 17])
 
     data_df = data_df[-validation_size:]
