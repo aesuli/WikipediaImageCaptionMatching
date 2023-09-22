@@ -85,7 +85,7 @@ Validation scripts to evaluate the methods locally.
 
 [create_validation_data.py](create_validation_data.py) selects the last `k` examples for the training data as a validation set.
 
-[evaluate_submission.py](evaluate_submission.py) computes NDCG of a submission on validation data.
+[evaluate_submission.py](evaluate_submissions.py) computes NDCG of a submission on validation data.
 
 The scripts [test_bert_lm_cosine_sim.py](test_bert_lm_cosine_sim.py), [test_levenshtein.py](test_levenshtein.py), [test_roberta_classifier.py](test_roberta_classifier.py), [test_roberta_classifier_prefiltered.py](test_roberta_classifier_prefiltered.py), now have a `data_source` variable that sets which dataset (`validation` or `test`) to load and produce a submission for.
 
